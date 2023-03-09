@@ -1,4 +1,4 @@
-# cuterweblinks
+# Cuter Weblinks
 
 Joomla Module to display Weblinks neatly
 

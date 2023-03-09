@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="3.8" client="site" method="upgrade">
+    <name>Cuter Weblinks</name>
+    <author>The Loom / Stefan</author>
+    <creationDate>2023-02-16</creationDate>
+    <copyright>Copyright (C) 2023 The Loom / Stefan Schulz. All rights reserved.</copyright>
+    <license>GNU General Public License version 3 or later; see LICENSE.txt</license>
+    <authorEmail>schulz@the-loom.de</authorEmail>
+    <authorUrl>https://www.the-loom.de</authorUrl>
+    <version>1.2</version>
+    <description>MOD_CUTERWEBLINKS_XML_DESCRIPTION</description>
+
+    <namespace path="src">TheLoom\Module\CuterWeblinks</namespace>
+
+    <files>
+        <filename module="mod_cuterweblinks">mod_cuterweblinks.php</filename>
+        <folder>language</folder>
+        <folder>src</folder>
+        <folder>tmpl</folder>
+        <filename>mod_cuterweblinks.xml</filename>
+    </files>
+
+    <media folder="media" destination="mod_cuterweblinks">
+        <folder>css</folder>
+    </media>
+
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field name="categories"
+                       type="category"
+                       extension="com_weblinks"
+                       multiple="true"
+                       size="5"
+                       default="all"
+                       layout="joomla.form.field.list-fancy-select"
+                       showon="datasource:articles"
+                       label="MOD_CUTERWEBLINKS_FIELD_CATEGORIES_LABEL"
+                       description="MOD_CUTERWEBLINKS_FIELD_CATEGORIES_DESCRIPTION">
+                    <option value="all">JOPTION_ALL_CATEGORIES</option>
+                </field>
+                <field name="count"
+                       type="number"
+                       label="MOD_CUTERWEBLINKS_FIELD_COUNT_LABEL"
+                       description="MOD_CUTERWEBLINKS_FIELD_COUNT_DESCRIPTION"
+                       min="1"
+                       default="5"
+                />
+                <field name="ordering"
+                       type="list"
+                       label="MOD_CUTERWEBLINKS_FIELD_ORDERING_LABEL"
+                       description="MOD_CUTERWEBLINKS_FIELD_ORDERING_DESCRIPTION"
+                       default="title">
+                    <option value="title">JGLOBAL_TITLE</option>
+                    <option value="ordering">MOD_CUTERWEBLINKS_FIELD_VALUE_ORDER</option>
+                    <option value="hits">MOD_CUTERWEBLINKS_FIELD_VALUE_HITS</option>
+                    <option value="created">MOD_CUTERWEBLINKS_FIELD_VALUE_DATE_CREATED</option>
+                </field>
+                <field name="direction"
+                       type="list"
+                       label="MOD_CUTERWEBLINKS_FIELD_ORDERDIRECTION_LABEL"
+                       description="MOD_CUTERWEBLINKS_FIELD_ORDERDIRECTION_DESCRIPTION"
+                       default="asc">
+                    <option value="ASC">MOD_CUTERWEBLINKS_FIELD_VALUE_ASCENDING</option>
+                    <option value="DESC">MOD_CUTERWEBLINKS_FIELD_VALUE_DESCENDING</option>
+                </field>
+                <field name="image"
+                       type="radio"
+                       label="MOD_CUTERWEBLINKS_FIELD_IMAGE_LABEL"
+                       description="MOD_CUTERWEBLINKS_FIELD_IMAGE_DESCRIPTION"
+                       layout="joomla.form.field.radio.switcher"
+                       default="0">
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+                <field name="description"
+                       type="radio"
+                       label="MOD_CUTERWEBLINKS_FIELD_DESCRIPTION_LABEL"
+                       description="MOD_CUTERWEBLINKS_FIELD_DESCRIPTION_DESCRIPTION"
+                       layout="joomla.form.field.radio.switcher"
+                       default="0">
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+                <field name="category"
+                       type="radio"
+                       label="MOD_CUTERWEBLINKS_FIELD_CATEGORY_LABEL"
+                       description="MOD_CUTERWEBLINKS_FIELD_CATEGORY_DESCRIPTION"
+                       layout="joomla.form.field.radio.switcher"
+                       default="0">
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+                <field name="hits"
+                       type="radio"
+                       label="MOD_CUTERWEBLINKS_FIELD_HITS_LABEL"
+                       description="MOD_CUTERWEBLINKS_FIELD_HITS_DESCRIPTION"
+                       layout="joomla.form.field.radio.switcher"
+                       default="0">
+                    <option value="0">JHIDE</option>
+                    <option value="1">JSHOW</option>
+                </field>
+
+                <field type="spacer" name="myspacer" label="MOD_CUTERWEBLINKS_SPACER_ADDITIONAL_INFO"/>
+
+                <field name="prologue"
+                       type="editor"
+                       editor="codemirror|none"
+                       filter="safehtml"
+                       buttons="false"
+                       syntax="html"
+                       label="MOD_CUTERWEBLINKS_FIELD_PROLOGUE_LABEL"
+                       description="MOD_CUTERWEBLINKS_FIELD_PROLOGUE_DESCRIPTION"
+                       rows="5"
+                />
+                <field name="epilogue"
+                       type="editor"
+                       editor="codemirror|none"
+                       filter="safehtml"
+                       buttons="false"
+                       syntax="html"
+                       label="MOD_CUTERWEBLINKS_FIELD_EPILOGUE_LABEL"
+                       description="MOD_CUTERWEBLINKS_FIELD_EPILOGUE_DESCRIPTION"
+                       rows="5"
+                />
+            </fieldset>
+            <fieldset name="advanced">
+                <field name="layout"
+                       type="modulelayout"
+                       label="JFIELD_ALT_LAYOUT_LABEL"
+                       class="custom-select"
+                />
+                <field name="moduleclass_sfx"
+                       type="textarea"
+                       label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                       rows="3"
+                />
+                <field name="cache"
+                       type="list"
+                       label="COM_MODULES_FIELD_CACHING_LABEL"
+                       default="0">
+                    <option value="1">JGLOBAL_USE_GLOBAL</option>
+                    <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
+                </field>
+                <field name="cache_time"
+                       type="number"
+                       label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+                       default="0"
+                />
+                <field name="cachemode"
+                       type="hidden"
+                       default="itemid">
+                    <option value="itemid"></option>
+                </field>
+            </fieldset>
+        </fields>
+    </config>
+
+    <updateservers>
+        <server type="extension" priority="1" name="mod_cuterweblinks">
+            https://www.the-loom.de/extensions/cuterweblinks/update.xml
+        </server>
+    </updateservers>
+
+</extension>

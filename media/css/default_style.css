@@ -1,0 +1,88 @@
+.prologue {
+    margin-bottom: 1rem;
+}
+ul.cuterweblinks {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+ul.cuterweblinks li {
+    background: rgba(247,247,247,0.9);
+    -moz-transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    -o-border-radius: 6px;
+    border-radius: 6px;
+    margin: 3px 0;
+}
+ul.cuterweblinks li:nth-child(2n+1) {
+    background-color: rgba(237,237,237,0.9);
+    -moz-transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+}
+ul.cuterweblinks li:nth-child(2n) {
+    background-color: transparent;
+}
+ul.cuterweblinks li a {
+    display: block;
+    padding: 5px 5px;
+    line-height: normal;
+    text-decoration: none;
+}
+ul.cuterweblinks li.using-grid a {
+    display: grid;
+    grid-template:
+            [top] "image content" auto [end]
+            / [left] 58px [sep] auto [right];
+}
+ul.cuterweblinks li a:hover {
+    background-color: #555;
+    color: #FFF;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    -o-border-radius: 6px;
+    border-radius: 6px;
+}
+ul.cuterweblinks li a div.image {
+    width: 48px;
+    height: 48px;
+    margin: 4px 6px 4px 4px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
+    box-sizing: content-box;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+ul.cuterweblinks li.using-grid a div.image {
+    grid-area: image;
+}
+ul.cuterweblinks li.using-grid a div.content {
+    grid-area: content;
+}
+ul.cuterweblinks li a div.category {
+    font-size: 0.8em;
+    margin-bottom: 0.25em;
+}
+ul.cuterweblinks li a div.title {
+    font-weight: bold;
+    margin-bottom: 0.25em;
+}
+ul.cuterweblinks li a div.description {
+    margin-bottom: 0.25em;
+}
+ul.cuterweblinks li a div.hits .badge {
+    float: right;
+}
+ul.cuterweblinks li a p {
+    margin: 0;
+}
+.epilogue {
+    margin-top: 1rem;
+}
