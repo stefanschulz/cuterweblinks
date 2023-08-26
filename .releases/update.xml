@@ -2,24 +2,24 @@
 <updates>
     <update>
         <name>Cuter Weblinks</name>
-        <description>This is Cuter Weblinks 1.2</description>
+        <description>This is Cuter Weblinks 1.3</description>
         <element>mod_cuterweblinks</element>
         <type>module</type>
         <client>site</client>
-        <version>1.2</version>
+        <version>1.3</version>
         <infourl title="Cuter Weblinks">https://www.the-loom.de/cuterweblinks</infourl>
         <downloads>
-            <downloadurl type="full" format="zip">https://www.the-loom.de/extensions/cuterweblinks/cuterweblinks-1.2.zip</downloadurl>
+            <downloadurl type="full" format="zip">https://www.the-loom.de/extensions/cuterweblinks/cuterweblinks-1.3.zip</downloadurl>
         </downloads>
         <tags>
             <tag>stable</tag>
         </tags>
-        <sha256>eb6b32626ac61ef34cab6b6cba9f4651d5a897c6e5070669f1eeb81e87cd8f22</sha256>
-        <sha384>36f1a4275ed4f3020e1690ef17c2d7ea7f38130b746d8fdd9353880f40112dafdf8a900fc43ea0d0c21acb6b23666449</sha384>
-        <sha512>02a8611d334599a22e122336628494eb534cb721c86c6c76e9a93d06c86fce4432d0cc2342a361fd09b9e7f3ae77038ab5f3d2851633f1ef6d0d263b6fa8dbbb</sha512>
+        <sha256>89e8c3390579abeff5a68c9c7375d746d5b52d306eb12c6d5d5a800d9b666fed</sha256>
+        <sha384>b4726e574c2341960645cd7ac8c50ed826ab004dd97420575165860477f92eaaed0ecad76a003c3489b977d1dd8b3e83</sha384>
+        <sha512>d521d42d6f0970869ab281259e1ff9b9e04e436108febdfc2c2a79f8cfcf96a7df7035ab1c9e77052a1f5acac0d8cf2c699a4ccf9d99e7e2e6a7da37dc2d5449</sha512>
         <maintainer>Stefan Schulz</maintainer>
         <maintainerurl>https://www.the-loom.de</maintainerurl>
-        <targetplatform name="joomla" version="4.(2|3)"/>
+        <targetplatform name="joomla" version="4.(2|3|4)"/>
         <php_minimum>8</php_minimum>
     </update>
 </updates>

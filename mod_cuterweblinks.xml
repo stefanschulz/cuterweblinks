@@ -2,12 +2,12 @@
 <extension type="module" version="3.8" client="site" method="upgrade">
     <name>Cuter Weblinks</name>
     <author>The Loom / Stefan</author>
-    <creationDate>2023-02-16</creationDate>
+    <creationDate>2023-08-24</creationDate>
     <copyright>Copyright (C) 2023 The Loom / Stefan Schulz. All rights reserved.</copyright>
     <license>GNU General Public License version 3 or later; see LICENSE.txt</license>
     <authorEmail>schulz@the-loom.de</authorEmail>
     <authorUrl>https://www.the-loom.de</authorUrl>
-    <version>1.2</version>
+    <version>1.3</version>
     <description>MOD_CUTERWEBLINKS_XML_DESCRIPTION</description>
 
     <namespace path="src">TheLoom\Module\CuterWeblinks</namespace>
@@ -99,6 +99,14 @@
                        default="0">
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
+                </field>
+                <field name="target"
+                       type="radio"
+                       label="MOD_CUTERWEBLINKS_FIELD_TARGET_LABEL"
+                       description="MOD_CUTERWEBLINKS_FIELD_TARGET_DESCRIPTION"
+                       default="0">
+                    <option value="0">MOD_CUTERWEBLINKS_FIELD_VALUE_SAME_WINDOW</option>
+                    <option value="1">MOD_CUTERWEBLINKS_FIELD_VALUE_NEW_WINDOW</option>
                 </field>
 
                 <field type="spacer" name="myspacer" label="MOD_CUTERWEBLINKS_SPACER_ADDITIONAL_INFO"/>

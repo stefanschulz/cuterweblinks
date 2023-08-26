@@ -30,6 +30,7 @@ endif; // prologue
 <ul class="cuterweblinks">
     <?php
     $usingGrid = $params->get('image', false) ? ' class="using-grid"' : '';
+    $target = $params->get('target', 0) == 1 ? '_blank' : '_top';
     foreach ($links as $link) :
         $id = $link->id;
         $title = $link->title;
@@ -40,7 +41,7 @@ endif; // prologue
         $imageUrl = $link->imageUrl;
         ?>
         <li<?php echo $usingGrid; ?>>
-            <a class="cuterweblink" href="<?php echo $reference; ?>">
+            <a class="cuterweblink" href="<?php echo $reference; ?>" target="<?php echo $target; ?>">
                 <?php if (!empty($imageUrl)) : ?>
                     <div class="image" style="background-image: url(<?php echo $imageUrl; ?>)"></div>
                 <?php endif; ?>

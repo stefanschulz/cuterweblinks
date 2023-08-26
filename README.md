@@ -13,4 +13,4 @@ Limit the number of entries to be shown.
 Sort by order, alphabetically or publication date.
 Decide upon which elements to show.
 Add some prologue and/or epilogue text if desired.
-Links are created according to Weblink style. 
+Links are created according to Weblink style and may be opened in the same or a new window/tab.
