@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Cuter Weblinks" default="package">
+
+    <property name="releaseFolder" value=".releases"/>
+    <property name="package" value="cuterweblinks"/>
+    <property name="version" value="1.3.1"/>
+    <property name="archive" value="${package}-${version}.zip"/>
+    <property name="releasePath" value="${releaseFolder}/${archive}"/>
+    <property name="updatePath" value="${releaseFolder}/update.xml"/>
+
+    <target name="package">
+        <delete file="${releasePath}" quiet="true"/>
+        <zip destfile="${releasePath}">
+            <fileset dir="." defaultexcludes="true">
+                <exclude name=".*"/>
+                <exclude name=".*/**"/>
+                <exclude name="build.xml"/>
+            </fileset>
+        </zip>
+        <filehash file="${releasePath}" hashtype="1" algorithm="sha256" propertyname="fh256"/>
+        <filehash file="${releasePath}" hashtype="1" algorithm="sha384" propertyname="fh384"/>
+        <filehash file="${releasePath}" hashtype="1" algorithm="sha512" propertyname="fh512"/>
+        <echo file="${updatePath}">&lt;?xml version="1.0" ?&gt;${line.separator}</echo>
+        <echoxml file="${updatePath}" append="true">
+            <updates>
+                <update>
+                    <name>Cuter Weblinks</name>
+                    <description>This is Cuter Weblinks ${version}</description>
+                    <element>mod_cuterweblinks</element>
+                    <type>module</type>
+                    <client>site</client>
+                    <version>${version}</version>
+                    <infourl title="Cuter Weblinks">https://www.the-loom.de/cuterweblinks</infourl>
+                    <downloads>
+                        <downloadurl type="full" format="zip">https://www.the-loom.de/extensions/cuterweblinks/${archive}</downloadurl>
+                    </downloads>
+                    <tags>
+                        <tag>stable</tag>
+                    </tags>
+                    <sha256>${fh256}</sha256>
+                    <sha384>${fh384}</sha384>
+                    <sha512>${fh512}</sha512>
+                    <maintainer>Stefan Schulz</maintainer>
+                    <maintainerurl>https://www.the-loom.de</maintainerurl>
+                    <targetplatform name="joomla" version="(4.(2|3|4)|5.(0|1))"/>
+                    <php_minimum>8</php_minimum>
+                </update>
+            </updates>
+        </echoxml>
+    </target>
+
+</project>

@@ -70,6 +70,7 @@ class CuterWeblinksHelper
             $db->quoteName('#__categories', 'categories')
             . ' ON ' . $db->quoteName('categories.id') . ' = ' . $db->quoteName('weblinks.catid')
         );
+        $query->where($db->quoteName('weblinks.state') . ' = 1');
         $query->where($db->quoteName('categories.published') . ' = 1');
         if (!$listAllCategories) {
             $query->where($db->quoteName('weblinks.catid') . ' IN (' . implode(',', $categories) . ')');
