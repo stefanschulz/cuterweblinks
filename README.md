@@ -8,9 +8,12 @@ Weblinks is an interesting component in Joomla that exists since its early age, 
 
 ## Features
 
-Choose to display entries from one, some, or all categories.
-Limit the number of entries to be shown.
-Sort by order, alphabetically or publication date.
-Decide upon which elements to show.
-Add some prologue and/or epilogue text if desired.
-Links are created according to Weblink style and may be opened in the same or a new window/tab.
+- Choose to display entries from one, some, or all categories.
+- Limit the number of entries to be shown.
+- Sort by order, alphabetically or publication date.
+- Decide upon which elements to show.
+- Open links in the same or a new window/tab.
+- Always show all links or filter by current site language.
+- Add some prologue and/or epilogue text if desired.
+
+Links are created according to Weblink style.

@@ -57,6 +57,7 @@ class CuterWeblinksHelper
         $limit = $params->get('count', 5);
         $ordering = $params->get('ordering');
         $direction = $params->get('direction');
+        $respectLanguages = $params->get('languages');
 
         // Setup and run DB query
         $db = Factory::getContainer()->get('DatabaseDriver');
@@ -74,6 +75,9 @@ class CuterWeblinksHelper
         $query->where($db->quoteName('categories.published') . ' = 1');
         if (!$listAllCategories) {
             $query->where($db->quoteName('weblinks.catid') . ' IN (' . implode(',', $categories) . ')');
+        }
+        if ($respectLanguages) {
+            $query->where($db->quoteName('weblinks.language') . ' IN (' . $db->quote($app->getLanguage()->getTag()) . ',' . $db->quote('*') . ')');
         }
         if (is_numeric($limit)) {
             $query->setLimit(intval($limit));
