@@ -19,7 +19,7 @@
     <sha512>0c53bb2df31f16cb35c3b71e516c4781fa1c68c1fb40750807489f22099fc8cf30e4d491638ec7c9190036499b4b5470d5170868a2de5468be507625afb043a0</sha512>
     <maintainer>Stefan Schulz</maintainer>
     <maintainerurl>https://www.the-loom.de</maintainerurl>
-    <targetplatform name="joomla" version="(4.(2|3|4)|5.(0|1))"/>
+    <targetplatform name="joomla" version="(4.(2|3|4)|5.(0|1|2))"/>
     <php_minimum>8</php_minimum>
   </update>
 </updates>
