@@ -3,11 +3,11 @@
     <name>Cuter Weblinks</name>
     <author>The Loom / Stefan</author>
     <creationDate>2023-08-24</creationDate>
-    <copyright>Copyright (C) 2023 The Loom / Stefan Schulz. All rights reserved.</copyright>
+    <copyright>Copyright (C) 2025 The Loom / Stefan Schulz. All rights reserved.</copyright>
     <license>GNU General Public License version 3 or later; see LICENSE.txt</license>
     <authorEmail>schulz@the-loom.de</authorEmail>
     <authorUrl>https://www.the-loom.de</authorUrl>
-    <version>1.4.0</version>
+    <version>1.5.0</version>
     <description>MOD_CUTERWEBLINKS_XML_DESCRIPTION</description>
 
     <namespace path="src">TheLoom\Module\CuterWeblinks</namespace>

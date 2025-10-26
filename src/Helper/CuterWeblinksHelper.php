@@ -3,14 +3,13 @@
  * @package    TheLoom.Module.CuterWeblinks
  *
  * @author     Stefan <schulz@the-loom.de>
- * @copyright  Copyright (C) 2023 The Loom / Stefan Schulz
+ * @copyright  Copyright (C) 2025 The Loom / Stefan Schulz
  * @license    GNU General Public License version 3 or later; see LICENSE.txt
  * @link       https://www.the-loom.de
  */
 
 namespace TheLoom\Module\CuterWeblinks\Site\Helper;
 
-use JHtml;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Router\Route;
@@ -127,14 +126,16 @@ class CuterWeblinksHelper
             // Get the template and file name from the string
             [, $layout] = explode(':', $layout);
         }
-        $stylesheet = JHtml::stylesheet($module . '/' . $layout . '_style.css', ['relative' => true, 'pathOnly' => true]);
-        if (empty($stylesheet)) {
-            $stylesheet = JHtml::stylesheet($module . '/default_style.css', ['relative' => true, 'pathOnly' => true]);
+        $basePath = 'media/' . $module . '/css/';
+        $fileName = $basePath . $layout . '_style.css';
+        if (file_exists(JPATH_ROOT . '/' . $fileName)) {
+            return $fileName;
         }
-        if (str_starts_with($stylesheet, '/')) {
-            $stylesheet = substr($stylesheet, 1);
+        $fileName = $basePath . 'default_style.css';
+        if (file_exists(JPATH_ROOT . '/' . $fileName)) {
+            return $fileName;
         }
-        return $stylesheet;
+        return "";
     }
 
 }

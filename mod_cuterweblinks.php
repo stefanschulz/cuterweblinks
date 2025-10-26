@@ -3,7 +3,7 @@
  * @package    TheLoom.Module.CuterWeblinks
  *
  * @author     Stefan <schulz@the-loom.de>
- * @copyright  Copyright (C) 2023 The Loom / Stefan Schulz
+ * @copyright  Copyright (C) 2025 The Loom / Stefan Schulz
  * @license    GNU General Public License version 3 or later; see LICENSE.txt
  * @link       https://www.the-loom.de
  */
@@ -28,6 +28,6 @@ if (empty($links)) {
 
 $layout = $params->get('layout', 'default');
 $styleFilename = CuterWeblinksHelper::getStyleFilename('mod_cuterweblinks', $layout);
-$webAssetManager->registerAndUseStyle('mod_cuterweblinks.' . $layout, $styleFilename, ['relative' => true]);
+$webAssetManager->registerAndUseStyle('mod_cuterweblinks.' . $layout, $styleFilename);
 
 require ModuleHelper::getLayoutPath('mod_cuterweblinks', $layout);
