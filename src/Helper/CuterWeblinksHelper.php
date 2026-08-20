@@ -54,8 +54,8 @@ class CuterWeblinksHelper
             $fields[] = 'weblinks.catid';
         }
         $limit = $params->get('count', 5);
-        $ordering = $params->get('ordering');
-        $direction = $params->get('direction');
+        $ordering = $params->get('ordering', 'title');
+        $direction = $params->get('direction', 'ASC');
         $respectLanguages = $params->get('languages');
 
         // Setup and run DB query
