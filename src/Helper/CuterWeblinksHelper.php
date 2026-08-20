@@ -72,6 +72,9 @@ class CuterWeblinksHelper
         );
         $query->where($db->quoteName('weblinks.state') . ' = 1');
         $query->where($db->quoteName('categories.published') . ' = 1');
+        $authorisedViewLevels = $app->getIdentity()->getAuthorisedViewLevels();
+        $query->whereIn($db->quoteName('weblinks.access'), $authorisedViewLevels);
+        $query->whereIn($db->quoteName('categories.access'), $authorisedViewLevels);
         if (!$listAllCategories) {
             $query->where($db->quoteName('weblinks.catid') . ' IN (' . implode(',', $categories) . ')');
         }
