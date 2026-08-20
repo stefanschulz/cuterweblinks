@@ -3,7 +3,7 @@
  * @package    TheLoom.Module.CuterWeblinks
  *
  * @author     Stefan <schulz@the-loom.de>
- * @copyright  Copyright (C) 2025 The Loom / Stefan Schulz
+ * @copyright  Copyright (C) 2026 The Loom / Stefan Schulz
  * @license    GNU General Public License version 3 or later; see LICENSE.txt
  * @link       https://www.the-loom.de
  */
