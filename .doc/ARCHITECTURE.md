@@ -11,7 +11,7 @@ Primary technical reference for developers and AI agents working on this codebas
 
 A Joomla **site module** (`mod_cuterweblinks`) that reads entries from the **Weblinks** component and renders them as a styled list. It does not have its own database tables, no AJAX, no JavaScript, no admin pages beyond the standard Joomla module-parameters form. All logic lives in one helper class and one template.
 
-**Hard dependency**: The Weblinks component (`com_weblinks`) is **not** part of Joomla core (hasn't been for a while — see `README.md`). It must be installed separately (e.g. from https://github.com/joomla-extensions/weblinks) for the `#__weblinks` / `#__categories` tables and the `weblink.go` route to exist. This module does not check for its presence; if the tables are missing, the query simply fails.
+**Hard dependency**: The Weblinks component (`com_weblinks`) is **not** part of Joomla core (hasn't been for a while — see `README.md`). It must be installed separately (e.g. from https://github.com/joomla-extensions/weblinks) for the `#__weblinks` / `#__categories` tables and the `weblink.go` route to exist. Since 1.5.1 the module checks for this: the frontend skips rendering entirely if the component isn't enabled, and the admin module-edit form shows a warning — see "Missing-dependency handling" below.
 
 ---
 
@@ -22,6 +22,7 @@ cuterweblinks/
 ├── mod_cuterweblinks.php              # Entry point: loads params, calls helper, registers CSS, requires layout
 ├── mod_cuterweblinks.xml              # Manifest: module config form (all params), update server, files/media mapping
 ├── src/Helper/CuterWeblinksHelper.php # All logic: DB query (getLinks) + layout CSS resolution (getStyleFilename)
+├── src/Field/WeblinksstatusField.php  # Admin-only form field: warns in the module-edit form if com_weblinks is missing/disabled
 ├── tmpl/default.php                   # Default layout — renders the <ul class="cuterweblinks"> list
 ├── media/css/default_style.css        # Styling for the default layout (list, grid-with-image variant, hover)
 ├── language/{en-GB,de-DE}/            # mod_cuterweblinks.ini (field labels) + .sys.ini (module name in Joomla's module chooser)
@@ -37,9 +38,10 @@ There is no `services/`, no `Dispatcher.php`, no admin controller — this is ab
 
 ```
 mod_cuterweblinks.php
-  → CuterWeblinksHelper::getLinks($params, $app)   // DB query, returns array of link objects (or empty)
+  → ComponentHelper::isEnabled('com_weblinks')      // since 1.5.1: return immediately if false, no query attempted
+  → CuterWeblinksHelper::getLinks($params, $app)     // DB query, returns array of link objects, empty array, or null on DB failure
   → if empty: return (nothing rendered, no module chrome)
-  → CuterWeblinksHelper::getStyleFilename(...)      // resolves which CSS to load for the active layout
+  → CuterWeblinksHelper::getStyleFilename(...)       // resolves which CSS to load for the active layout
   → ModuleHelper::getLayoutPath(...) → require tmpl/default.php  // renders the <ul>
 ```
 
@@ -68,6 +70,15 @@ Builds one query against `#__weblinks` LEFT JOIN `#__categories`. Key behavior, 
 ### The 1.5.1 default-value bug (fixed, keep it fixed)
 
 `$params->get('ordering')` and `$params->get('direction')` used to be called **without a default**. Through the normal "New Module" admin form this never showed up (the `<select>` always submits *some* value, even untouched). It broke for module rows created any other way — direct DB inserts, migrations, or old rows saved before these fields existed in the manifest — producing `SQL error 1054: Unknown column 'weblinks.' in order clause` and taking down the whole page render (not just the module). Fixed by defaulting to `'title'` / `'ASC'`, matching the XML manifest defaults. **Lesson for future params**: any param read via `$params->get()` inside the query builder should carry an explicit default matching its manifest default — don't rely on the admin form always populating it.
+
+### Missing-dependency handling (since 1.5.1)
+
+Two independent layers, because they cover different failure modes:
+
+1. **`ComponentHelper::isEnabled('com_weblinks')`** in `mod_cuterweblinks.php` — a cheap check against Joomla's already-loaded extension registry (no extra query). Covers "not installed" and "installed but disabled". If false, the module returns immediately, before `getLinks()` is even called.
+2. **`try`/`catch (\RuntimeException)`** around `setQuery()`/`loadObjectList()` in `getLinks()` — covers the narrower case where the extension row says enabled but the `#__weblinks` table itself is missing/broken (e.g. an interrupted uninstall), which layer 1 can't detect. On failure it logs via `Log::add(..., Log::WARNING, 'mod_cuterweblinks')` (silent unless an admin has configured a logger for that category) and returns `null`.
+
+**Important**: the concrete exception class thrown on a missing table is not stable — testing surfaced both Joomla's own `PrepareStatementFailureException` and PHP's native `mysqli_sql_exception` (mysqli throws by default since PHP 8.1) for the *same* underlying error, depending on where in the driver the failure occurs (`setQuery()`'s eager statement preparation vs. actual execution). Neither is a subtype of the other; both extend `\RuntimeException` directly. Catch `\RuntimeException`, not a specific Joomla exception class, or a future PHP/driver combination will slip through uncaught again.
 
 ---
 
@@ -108,6 +119,8 @@ Field labels/descriptions live in `language/*/mod_cuterweblinks.ini` — every `
 2. Add its label/description keys to **both** language `.ini` files.
 3. In `CuterWeblinksHelper::getLinks()`: read it with `$params->get('name', <same default as XML>)`; if it affects field selection, add to the conditional `$fields[]` block.
 4. In `tmpl/default.php`: read the corresponding `$link->property ?? ''` (never assume the property exists — see field-selection note above) and render conditionally.
+
+**Adding a custom admin form field** (like `WeblinksstatusField`): Joomla only registers the PSR-4 autoload prefix matching the extension's own `client` — for this module (`client="site"`) that's `TheLoom\Module\CuterWeblinks\Site\` mapped to `src/`, **even for classes that only ever run in the administrator** (the module-edit form). There is no `...\Administrator\` prefix registered for a site-client extension, so custom field classes still go under the `Site\` namespace and physically in `src/Field/`, not a separate `administrator/` folder. Joomla's form engine also won't find the field type unless you register the prefix explicitly via `addfieldprefix="..."` on the `<fields>` element in the XML (see `mod_cuterweblinks.xml`) — it does not scan extension namespaces automatically. Class name for `type="foo"` resolves to `{prefix}\FooField` (first letter capitalised, rest as-is).
 
 **Adding a new layout**: Joomla's standard `modulelayout` mechanism — drop a new file next to `tmpl/default.php` (e.g. `tmpl/grid.php`), it becomes selectable in the module's Advanced tab automatically. `CuterWeblinksHelper::getStyleFilename()` will look for a matching `media/css/{layout}_style.css` and fall back to `default_style.css` if none exists.
 
