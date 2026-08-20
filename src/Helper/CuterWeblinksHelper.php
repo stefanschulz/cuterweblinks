@@ -12,6 +12,7 @@ namespace TheLoom\Module\CuterWeblinks\Site\Helper;
 
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Log\Log;
 use Joomla\CMS\Router\Route;
 use Joomla\Registry\Registry;
 
@@ -85,8 +86,19 @@ class CuterWeblinksHelper
             $query->setLimit(intval($limit));
         }
         $query->order($db->quoteName('weblinks.' . $ordering) . ' ' . $direction);
-        $db->setQuery($query);
-        $links = $db->loadObjectList();
+        try {
+            $db->setQuery($query);
+            $links = $db->loadObjectList();
+        } catch (\RuntimeException $exception) {
+            // Catches Joomla's ExecutionFailureException/PrepareStatementFailureException as well as
+            // a native mysqli_sql_exception (PHP's default mysqli error mode since 8.1) - which concrete
+            // type surfaces depends on the driver/PHP version, so the common RuntimeException ancestor
+            // is caught instead of enumerating them. Weblinks may be enabled in the extensions registry
+            // but its tables missing or broken (e.g. an interrupted uninstall) - skip the module instead
+            // of taking down the whole page.
+            Log::add('CuterWeblinksHelper: failed to query weblinks - ' . $exception->getMessage(), Log::WARNING, 'mod_cuterweblinks');
+            return null;
+        }
         // postprocessing results to clean up title, determine target reference and resolve image url
         if (!empty($links)) {
             foreach ($links as $link) {
