@@ -25,8 +25,11 @@
     </media>
 
     <config>
-        <fields name="params">
+        <fields name="params" addfieldprefix="TheLoom\Module\CuterWeblinks\Site\Field">
             <fieldset name="basic">
+                <field name="weblinksstatus"
+                       type="weblinksstatus"
+                />
                 <field name="categories"
                        type="category"
                        extension="com_weblinks"

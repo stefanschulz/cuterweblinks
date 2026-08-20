@@ -11,6 +11,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Application\CMSApplicationInterface;
+use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\Registry\Registry;
 use TheLoom\Module\CuterWeblinks\Site\Helper\CuterWeblinksHelper;
@@ -18,6 +19,10 @@ use TheLoom\Module\CuterWeblinks\Site\Helper\CuterWeblinksHelper;
 /** @var CMSApplicationInterface $app */
 /** @var Registry $params */
 /** @var Joomla\CMS\WebAsset\WebAssetManager $webAssetManager */
+
+if (!ComponentHelper::isEnabled('com_weblinks')) {
+    return;
+}
 
 $webAssetManager = $app->getDocument()->getWebAssetManager();
 
