@@ -21,7 +21,7 @@ This is a small project (one helper class, one template, one XML manifest) — t
 ## Working on this project (human or agent)
 
 1. Read ARCHITECTURE.md's "Development Patterns" section before adding a param or layout — it's a short checklist (manifest field → language keys → helper → template) and it's easy to miss the language file step.
-2. This module has no automated tests. Verify behavior changes against a real Joomla instance — a disposable Docker stack (PHP-apache + MySQL, official Joomla zip, `cli/joomla.php extension:install`) is the pattern used so far; see CHANGES.md 1.5.1 for a worked example of what was checked and how.
+2. This module has no automated tests. Verify behavior changes against a real Joomla instance — **`.docker/` has a standing dev/test instance for this** (official Joomla + MariaDB images, `docker compose --project-directory .docker up -d`), with a seed fixture (`.docker/seed/`) covering access levels, `description_trim`, empty descriptions and language filtering, and two pre-configured module instances ("Defaults" / "Full Featured") for regression vs. new-behavior checks side by side. See `.docker/README.md`.
 3. When a change is bug-fix-only and backward compatible, that's a patch version; a new param/layout/feature is a minor version. Bump `<version>` in `mod_cuterweblinks.xml` accordingly and add an entry to CHANGES.md.
 4. `build.xml`'s `targetplatform` regex must be updated by hand whenever a new Joomla release should be advertised as compatible — nothing does this automatically.
 

@@ -126,7 +126,7 @@ Field labels/descriptions live in `language/*/mod_cuterweblinks.ini` — every `
 
 **Adding a new layout**: Joomla's standard `modulelayout` mechanism — drop a new file next to `tmpl/default.php` (e.g. `tmpl/grid.php`), it becomes selectable in the module's Advanced tab automatically. `CuterWeblinksHelper::getStyleFilename()` will look for a matching `media/css/{layout}_style.css` and fall back to `default_style.css` if none exists.
 
-**Testing without a real server**: this module has no unit tests. Functional verification in this project has been done by standing up a disposable Joomla instance in Docker (official Joomla source zip + PHP-apache + MySQL containers), installing `com_weblinks` separately, then installing this module's zip via `cli/joomla.php extension:install`. See `CHANGES.md` for what was verified this way for 1.5.1.
+**Testing without a real server**: this module has no unit tests. There's a standing, reusable dev/test instance for this now — see `.docker/README.md` (bring-up, installing `com_weblinks` + this module, and a seed fixture at `.docker/seed/` covering access levels, `description_trim`, empty descriptions and language filtering). Earlier verification (1.5.1 and before) used disposable one-off Docker stacks instead; see `CHANGES.md` for what was checked each time.
 
 ---
 
