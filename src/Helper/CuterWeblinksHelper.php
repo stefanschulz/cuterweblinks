@@ -103,6 +103,22 @@ class CuterWeblinksHelper
         if (!empty($links)) {
             foreach ($links as $link) {
                 $link->title = strip_tags($link->title);
+                if (isset($link->description)) {
+                    $trim = (int) $params->get('description_trim', 0);
+                    if ($trim > 0) {
+                        $plain = trim(preg_replace('/\s+/', ' ', strip_tags($link->description)));
+                        if (mb_strlen($plain) > $trim) {
+                            // cut at the last whole word within the limit, then ellipsis
+                            $cut = mb_substr($plain, 0, $trim);
+                            $lastSpace = mb_strrpos($cut, ' ');
+                            if ($lastSpace !== false) {
+                                $cut = mb_substr($cut, 0, $lastSpace);
+                            }
+                            $plain = rtrim($cut) . '…';
+                        }
+                        $link->description = $plain;
+                    }
+                }
                 $link->reference = Route::_('index.php?option=com_weblinks&task=weblink.go&id=' . $link->id);
                 $link->imageUrl = null;
                 if (!empty($link->images)) {

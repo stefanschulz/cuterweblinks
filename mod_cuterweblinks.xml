@@ -7,7 +7,7 @@
     <license>GNU General Public License version 3 or later; see LICENSE.txt</license>
     <authorEmail>schulz@the-loom.de</authorEmail>
     <authorUrl>https://www.the-loom.de</authorUrl>
-    <version>1.5.1</version>
+    <version>1.6.0</version>
     <description>MOD_CUTERWEBLINKS_XML_DESCRIPTION</description>
 
     <namespace path="src">TheLoom\Module\CuterWeblinks</namespace>
@@ -85,6 +85,14 @@
                     <option value="0">JHIDE</option>
                     <option value="1">JSHOW</option>
                 </field>
+                <field name="description_trim"
+                       type="number"
+                       label="MOD_CUTERWEBLINKS_FIELD_DESCRIPTION_TRIM_LABEL"
+                       description="MOD_CUTERWEBLINKS_FIELD_DESCRIPTION_TRIM_DESCRIPTION"
+                       min="0"
+                       default="0"
+                       showon="description:1"
+                />
                 <field name="category"
                        type="radio"
                        label="MOD_CUTERWEBLINKS_FIELD_CATEGORY_LABEL"
