@@ -1,0 +1,78 @@
+name: cuterweblinks-dev
+
+# Disposable dev / test instance for mod_cuterweblinks.
+# Fresh Joomla (official image) + MariaDB, wired to the shared dev-proxy Traefik.
+#
+#   http://cuterweblinks.localhost/                front end
+#   http://cuterweblinks.localhost/administrator/  admin  (credentials in .env)
+#   http://localhost:8092/                          direct fallback (no *.localhost DNS)
+#
+# This instance is meant to be thrown away and recreated:
+#   docker compose --project-directory .docker down -v && docker compose --project-directory .docker up -d
+#
+# See README.md for bring-up, extension install and seeding.
+
+services:
+  db:
+    image: mariadb:11.4
+    container_name: cuterweblinks_dev_db
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${DB_NAME:-joomla}
+      MARIADB_USER: ${DB_USER:-joomla}
+      MARIADB_PASSWORD: ${DB_PASSWORD:-joomla}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - "${DB_PORT:-3312}:3306"          # fallback for CLI tools
+    networks:
+      - default
+
+  joomla:
+    image: joomla:${JOOMLA_TAG:-6.1-php8.4-apache}
+    container_name: cuterweblinks_dev_web
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      JOOMLA_DB_HOST: db
+      JOOMLA_DB_USER: ${DB_USER:-joomla}
+      JOOMLA_DB_PASSWORD: ${DB_PASSWORD:-joomla}
+      JOOMLA_DB_NAME: ${DB_NAME:-joomla}
+      JOOMLA_SITE_NAME: "CuterWeblinks Dev"
+      JOOMLA_ADMIN_USER: "Dev Admin"
+      JOOMLA_ADMIN_USERNAME: ${JOOMLA_ADMIN_USERNAME:-admin}
+      JOOMLA_ADMIN_PASSWORD: ${JOOMLA_ADMIN_PASSWORD:-admin12345678}
+      JOOMLA_ADMIN_EMAIL: ${JOOMLA_ADMIN_EMAIL:-dev@cuterweblinks.localhost}
+    volumes:
+      - joomla-data:/var/www/html
+      # --- module source, live-mounted over the installed extension -------------
+      # Enable these AFTER the first boot installed Joomla AND both com_weblinks
+      # and mod_cuterweblinks were installed once (README > "Installing the
+      # extensions"). Then edits under src/ and tmpl/ take effect immediately -
+      # re-run extension:install only when the manifest (mod_cuterweblinks.xml)
+      # or language files change.
+      # - ../src:/var/www/html/modules/mod_cuterweblinks/src
+      # - ../tmpl:/var/www/html/modules/mod_cuterweblinks/tmpl
+      # - ../media/css:/var/www/html/media/mod_cuterweblinks/css
+    ports:
+      - "${HTTP_PORT:-8092}:80"          # fallback; primary access is via Traefik
+    networks:
+      - default
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=dev-proxy"
+      - "traefik.http.routers.cuterweblinks-dev.rule=Host(`cuterweblinks.localhost`)"
+      - "traefik.http.routers.cuterweblinks-dev.entrypoints=web"
+      - "traefik.http.services.cuterweblinks-dev.loadbalancer.server.port=80"
+
+volumes:
+  db-data:
+  joomla-data:
+
+networks:
+  proxy:
+    name: dev-proxy
+    external: true
