@@ -27,4 +27,4 @@ This is a small project (one helper class, one template, one XML manifest) — t
 
 ---
 
-**Last Updated**: August 2026 · **Plugin Version**: 1.5.1
+**Last Updated**: October 2026 · **Plugin Version**: 1.6.0

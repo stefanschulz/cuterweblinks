@@ -2,8 +2,8 @@
 
 Primary technical reference for developers and AI agents working on this codebase.
 
-**Version**: 1.5.1
-**Last Updated**: August 2026
+**Version**: 1.6.0
+**Last Updated**: October 2026
 
 ---
 
@@ -64,6 +64,7 @@ Builds one query against `#__weblinks` LEFT JOIN `#__categories`. Key behavior, 
 3. **Ordering**: `ORDER BY weblinks.{ordering} {direction}`, defaults `title` / `ASC` (since 1.5.1 — see below). `$ordering` is inserted into `quoteName()` directly from module params; the field is a fixed `<list>` in the manifest (`title|ordering|hits|created`), not free text, but if you ever add a way to set it outside that form, validate against the allowed set first.
 4. **Postprocessing** (after `loadObjectList()`):
    - `title` is stripped of tags.
+   - `description` (since 1.6.0, only when the `description` field was selected): if `description_trim` is a positive int, HTML is stripped, whitespace collapsed, and the result cut to that many characters at the last word boundary with a trailing `…` — but only if something was actually cut. `0` (default) leaves `description` untouched (raw HTML), preserving every pre-1.6.0 installation's output exactly.
    - `reference` is built via `Route::_('index.php?option=com_weblinks&task=weblink.go&id=' . $id)` — this is how the frontend link actually resolves through the (separately installed) Weblinks component.
    - `imageUrl` is resolved from the JSON `images` field (`image_first` falling back to `image_second`), with Joomla's `#...` image-attributes suffix stripped.
 
@@ -94,6 +95,7 @@ All params live in one `basic` fieldset plus a standard `advanced` fieldset (lay
 | `direction` | list (ASC/DESC) | `asc` | `getLinks()` — `ORDER BY` direction |
 | `image` | radio | `0` | `getLinks()` field selection + `tmpl/default.php` |
 | `description` | radio | `0` | same |
+| `description_trim` | number (`showon="description:1"`) | `0` | `getLinks()` postprocessing — plain-text truncation, see below |
 | `category` | radio | `0` | same |
 | `hits` | radio | `0` | same |
 | `target` | radio (0/1) | `0` | `tmpl/default.php` — `_top` vs `_blank` |

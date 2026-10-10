@@ -4,6 +4,13 @@ For full commit-level history use `git log`; this file summarizes what changed a
 
 ---
 
+## 1.6.0 (October 2026)
+
+Minor release — new optional param, fully backward compatible (default preserves prior behavior byte-for-byte).
+
+- **New**: `description_trim` param (number, default `0`, only shown when "Show description" is on). When set to a positive value, the description is stripped of HTML and cut to plain text of at most that many characters, breaking at the last whole word and appending `…` only if something was actually cut. `0` keeps today's behavior unchanged: raw HTML, untouched. Driven by the `empulsiv` site template's need for equal-height cards, where unbounded rich-text HTML breaks CSS line-clamping.
+- Implemented without any Joomla string-helper dependency (plain `strip_tags`/`mb_substr`), to avoid coupling to a helper that has moved between Joomla versions in the past.
+
 ## 1.5.1 (August 2026)
 
 Patch release — bug fixes only, no new features or config changes.
