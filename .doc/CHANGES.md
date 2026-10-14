@@ -4,6 +4,12 @@ For full commit-level history use `git log`; this file summarizes what changed a
 
 ---
 
+## 1.6.1 (October 2026)
+
+Patch release — bug fix only.
+
+- **Fix**: `description_trim` glued adjacent paragraphs together without a space (`<p>…end.</p><p>Next…</p>` became `…end.Next…`) because `strip_tags()` removes tags without a replacement. Block-level tags (`p`, `div`, `br`, `hr`, `li`, `ul`, `ol`, `h1`–`h6`, `table`, `tr`, `td`, `th`, `blockquote`, `pre`) are now replaced by a space before stripping; inline tags (`b`, `a`, `span`, …) are still removed without one so words like `Joom<b>la</b>` stay whole. Found during Joomla 6.2.0 testing. Output with `description_trim` = `0` is unchanged.
+
 ## 1.6.0 (October 2026)
 
 Minor release — new optional param, fully backward compatible (default preserves prior behavior byte-for-byte).

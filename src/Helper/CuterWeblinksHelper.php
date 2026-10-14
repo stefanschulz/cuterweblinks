@@ -106,7 +106,11 @@ class CuterWeblinksHelper
                 if (isset($link->description)) {
                     $trim = (int) $params->get('description_trim', 0);
                     if ($trim > 0) {
-                        $plain = trim(preg_replace('/\s+/', ' ', strip_tags($link->description)));
+                        // block-level tags become a space first, otherwise strip_tags() glues
+                        // adjacent paragraphs together ("...end.</p><p>Next" -> "...end.Next");
+                        // inline tags (<b>, <a>, ...) are removed without one so words stay whole
+                        $html = preg_replace('/<\/?(?:p|div|br|hr|li|ul|ol|h[1-6]|table|tr|td|th|blockquote|pre)\b[^>]*>/i', ' ', $link->description);
+                        $plain = trim(preg_replace('/\s+/', ' ', strip_tags($html)));
                         if (mb_strlen($plain) > $trim) {
                             // cut at the last whole word within the limit, then ellipsis
                             $cut = mb_substr($plain, 0, $trim);

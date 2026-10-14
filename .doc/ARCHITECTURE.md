@@ -2,7 +2,7 @@
 
 Primary technical reference for developers and AI agents working on this codebase.
 
-**Version**: 1.6.0
+**Version**: 1.6.1
 **Last Updated**: October 2026
 
 ---
@@ -64,7 +64,7 @@ Builds one query against `#__weblinks` LEFT JOIN `#__categories`. Key behavior, 
 3. **Ordering**: `ORDER BY weblinks.{ordering} {direction}`, defaults `title` / `ASC` (since 1.5.1 — see below). `$ordering` is inserted into `quoteName()` directly from module params; the field is a fixed `<list>` in the manifest (`title|ordering|hits|created`), not free text, but if you ever add a way to set it outside that form, validate against the allowed set first.
 4. **Postprocessing** (after `loadObjectList()`):
    - `title` is stripped of tags.
-   - `description` (since 1.6.0, only when the `description` field was selected): if `description_trim` is a positive int, HTML is stripped, whitespace collapsed, and the result cut to that many characters at the last word boundary with a trailing `…` — but only if something was actually cut. `0` (default) leaves `description` untouched (raw HTML), preserving every pre-1.6.0 installation's output exactly.
+   - `description` (since 1.6.0, only when the `description` field was selected): if `description_trim` is a positive int, block-level tags (`<p>`, `<br>`, `<li>`, …) are first replaced by a space (since 1.6.1 — otherwise adjacent paragraphs fuse into one word), then remaining HTML is stripped, whitespace collapsed, and the result cut to that many characters at the last word boundary with a trailing `…` — but only if something was actually cut. `0` (default) leaves `description` untouched (raw HTML), preserving every pre-1.6.0 installation's output exactly.
    - `reference` is built via `Route::_('index.php?option=com_weblinks&task=weblink.go&id=' . $id)` — this is how the frontend link actually resolves through the (separately installed) Weblinks component.
    - `imageUrl` is resolved from the JSON `images` field (`image_first` falling back to `image_second`), with Joomla's `#...` image-attributes suffix stripped.
 
