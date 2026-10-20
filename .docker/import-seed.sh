@@ -27,7 +27,7 @@ echo "live table prefix: $prefix"
 
 sed "s/\`#__/\`${prefix}/g" seed/weblinks-seed.sql \
   | docker exec -i "$DB" mariadb -u"$DBUSER" -p"$DBPASS" "$DBNAME"
-echo "Weblinks seed imported (3 categories, 7 weblinks)."
+echo "Weblinks seed imported (4 categories, 9 weblinks)."
 
 sed "s/\`#__/\`${prefix}/g" seed/module-seed.sql \
   | docker exec -i "$DB" mariadb -u"$DBUSER" -p"$DBPASS" "$DBNAME"

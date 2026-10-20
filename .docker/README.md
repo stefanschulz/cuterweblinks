@@ -86,9 +86,10 @@ repo (see `.doc/ARCHITECTURE.md`). Install it first:
 MSYS_NO_PATHCONV=1 bash .docker/import-seed.sh
 ```
 
-Imports `.docker/seed/weblinks-seed.sql` (3 categories at different access
-levels + 7 weblinks deliberately covering: category- vs. weblink-level access
-restriction, a long multi-paragraph description for `description_trim`
+Imports `.docker/seed/weblinks-seed.sql` (4 categories - Public / Registered /
+Special / Unpublished - + 9 weblinks deliberately covering: category- vs.
+weblink-level access restriction, an unpublished link and a link in an
+unpublished category, a long multi-paragraph description for `description_trim`
 testing, an empty description, a non-default-language entry, and a featured
 entry) and `.docker/seed/module-seed.sql`, which publishes two module
 instances to `sidebar-right` on every page:
@@ -115,6 +116,28 @@ any seed-file edit without a full `down -v`.
   HTML-free, ≤ 141 characters, cut at a word boundary with a trailing `…`.
 - "No Description Example": no description block in either instance, and
   specifically no stray `…` in "Full Featured" (nothing was there to cut).
+
+## Running the tests
+
+PHPUnit suites live in `tests/` (see `.doc/ARCHITECTURE.md` -> "Testing"). The repo is
+mounted read-only at `/repo` in the Joomla container; `vendor/` comes from the host:
+
+```bash
+composer install                       # once, in the repo root
+.docker/test.sh                        # Unit + Integration inside the container
+.docker/test.sh --testsuite Unit       # PHPUnit arguments are passed through
+.docker/test.sh --filter OrderBy
+composer run test                      # Unit only, on the host, no Docker
+```
+
+The Integration suite needs the stack from this README **with `com_weblinks` installed and
+the seed imported** (it finds rows by title, so a fresh import is always a safe reset). It
+does not need `mod_cuterweblinks` installed - it loads the classes straight from the
+working tree. Against another stack (e.g. `joomla62/`) set `CONTAINER=<web container>` and
+mount the repo at `/repo` there too.
+
+If you changed the compose file, `docker compose --project-directory .docker up -d`
+recreates the container (data lives in the named volumes).
 
 ## Iterating on the code
 

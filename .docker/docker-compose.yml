@@ -47,6 +47,8 @@ services:
       JOOMLA_ADMIN_EMAIL: ${JOOMLA_ADMIN_EMAIL:-dev@cuterweblinks.localhost}
     volumes:
       - joomla-data:/var/www/html
+      # working tree, read-only: .docker/test.sh runs PHPUnit from here (see tests/)
+      - ..:/repo:ro
       # --- module source, live-mounted over the installed extension -------------
       # Enable these AFTER the first boot installed Joomla AND both com_weblinks
       # and mod_cuterweblinks were installed once (README > "Installing the

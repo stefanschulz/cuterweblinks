@@ -7,6 +7,7 @@
 -- module's query/template touch, so future integration tests have a known,
 -- reproducible fixture:
 --   - 3 categories at different access levels (Public / Registered / Special)
+--     plus an unpublished one
 --   - a weblink restricted at the *category* level vs. one restricted at the
 --     *weblink* level within an otherwise-public category (see 1.5.1's
 --     access-level fix)
@@ -35,11 +36,13 @@ INSERT INTO `#__categories`
 VALUES
   (0, 1, 1, 2, 1, 'public-category',     'com_weblinks', 'Public Category',     'public-category',     '', 'Visible to everyone.',            1, NULL, NULL, 1, '{}', '', '', '{}', 42, '2026-01-10 09:00:00', 42, '2026-01-10 09:00:00', 0, '*', 1),
   (0, 1, 3, 4, 1, 'registered-category', 'com_weblinks', 'Registered Category', 'registered-category', '', 'Restricted at category level.',  1, NULL, NULL, 2, '{}', '', '', '{}', 42, '2026-01-10 09:00:00', 42, '2026-01-10 09:00:00', 0, '*', 1),
-  (0, 1, 5, 6, 1, 'special-category',    'com_weblinks', 'Special Category',    'special-category',    '', 'Restricted at category level.',  1, NULL, NULL, 3, '{}', '', '', '{}', 42, '2026-01-10 09:00:00', 42, '2026-01-10 09:00:00', 0, '*', 1);
+  (0, 1, 5, 6, 1, 'special-category',    'com_weblinks', 'Special Category',    'special-category',    '', 'Restricted at category level.',  1, NULL, NULL, 3, '{}', '', '', '{}', 42, '2026-01-10 09:00:00', 42, '2026-01-10 09:00:00', 0, '*', 1),
+  (0, 1, 7, 8, 1, 'unpublished-category', 'com_weblinks', 'Unpublished Category', 'unpublished-category', '', 'Unpublished, so its links must never show.', 0, NULL, NULL, 1, '{}', '', '', '{}', 42, '2026-01-10 09:00:00', 42, '2026-01-10 09:00:00', 0, '*', 1);
 
 SET @catPublic     = (SELECT id FROM `#__categories` WHERE alias = 'public-category'     AND extension = 'com_weblinks');
 SET @catRegistered = (SELECT id FROM `#__categories` WHERE alias = 'registered-category' AND extension = 'com_weblinks');
 SET @catSpecial    = (SELECT id FROM `#__categories` WHERE alias = 'special-category'    AND extension = 'com_weblinks');
+SET @catUnpublished = (SELECT id FROM `#__categories` WHERE alias = 'unpublished-category' AND extension = 'com_weblinks');
 
 -- Weblinks ------------------------------------------------------------------
 INSERT INTO `#__weblinks`
@@ -103,4 +106,20 @@ VALUES
    '<p>Flagged as featured; also has the highest hit count in this fixture.</p>',
    99, 1, 6, 1, '{}', '*',
    '2026-01-21 10:00:00', 42, '', '2026-01-21 10:00:00', 42, '', '', '{}',
-   1, '', '2026-01-21 10:00:00', NULL, 1, '{}');
+   1, '', '2026-01-21 10:00:00', NULL, 1, '{}'),
+
+  -- 8: unpublished (state 0) weblink in an otherwise-Public category - the state filter
+  --    must hide it from everyone, including Super Users on the front end
+  (@catPublic, 'Unpublished Link', 'unpublished-link', 'https://example.com/unpublished',
+   '<p>State 0: must never be listed.</p>',
+   1, 0, 7, 1, '{}', '*',
+   '2026-01-22 10:00:00', 42, '', '2026-01-22 10:00:00', 42, '', '', '{}',
+   0, '', '2026-01-22 10:00:00', NULL, 1, '{}'),
+
+  -- 9: published weblink with Public access inside an unpublished category - the
+  --    categories.published filter must hide it
+  (@catUnpublished, 'Link In Unpublished Category', 'link-in-unpublished-category', 'https://example.com/in-unpublished-category',
+   '<p>Published itself, but its category is not.</p>',
+   1, 1, 1, 1, '{}', '*',
+   '2026-01-23 10:00:00', 42, '', '2026-01-23 10:00:00', 42, '', '', '{}',
+   0, '', '2026-01-23 10:00:00', NULL, 1, '{}');

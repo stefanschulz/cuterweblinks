@@ -4,6 +4,16 @@ For full commit-level history use `git log`; this file summarizes what changed a
 
 ---
 
+## Unreleased
+
+No change in behaviour; nothing here is a release by itself, the refactor ships with the next one.
+
+- **Tests**: PHPUnit suites added (`tests/Unit`, `tests/Integration`, `composer.json`, `phpunit.xml.dist`, `.docker/test.sh`). The integration suite checks `getLinks()` against the real database of the `.docker/` stack: access levels, state/published, language, ordering, category filter, count, field selection, image URL, `description_trim`, and the broken-table guard.
+- **Refactor**: the `description_trim` logic moved unchanged from the `getLinks()` loop into `CuterWeblinksHelper::trimDescription()` so it can be unit-tested without Joomla.
+- **Build**: `build.xml` now also keeps `vendor/`, `tests/`, `composer.json`, `composer.lock` and `phpunit.xml.dist` out of the release zip (verified: the zip content is unchanged).
+- **Seed**: `.docker/seed/weblinks-seed.sql` gained an unpublished link and a link in an unpublished category (now 4 categories, 9 links), because the state/published filters were not covered by any fixture row.
+- **Known quirk (pinned by a test, not changed)**: `description_trim` drops a word that ends exactly at the limit (`alpha beta gamma` at 10 → `alpha…`), since it cuts at the last space *inside* the first N characters.
+
 ## 1.6.1 (October 2026)
 
 Patch release — bug fix only.
