@@ -1,0 +1,141 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    name: Lint + Unit (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.3', '8.4']
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring
+          coverage: none
+          tools: composer:v2
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.composer/cache
+            vendor
+          key: composer-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ matrix.php }}-
+
+      - name: Validate composer.json
+        run: composer validate --strict --no-check-publish
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Syntax check (php -l)
+        run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l > /dev/null
+
+      - name: Unit suite (phpunit)
+        run: composer test
+
+  package:
+    name: Release package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP + Phing
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: phing
+
+      # The packaging is part of what ships: a stray vendor/ or tests/ in the zip, or a version that
+      # the changelog never heard of, is a release bug.
+      - name: Build the zip
+        run: phing package
+
+      - name: Check version and zip content
+        run: |
+          set -euo pipefail
+          version="$(sed -n 's#.*<version>\(.*\)</version>.*#\1#p' mod_cuterweblinks.xml | head -1)"
+          zip=".releases/cuterweblinks-${version}.zip"
+          echo "manifest version: ${version}"
+          test -f "$zip" || { echo "::error::$zip was not built"; exit 1; }
+          grep -q "^## ${version} " .doc/CHANGES.md \
+            || { echo "::error::.doc/CHANGES.md has no section for ${version}"; exit 1; }
+          unzip -l "$zip"
+          for required in mod_cuterweblinks.xml mod_cuterweblinks.php src/Helper/CuterWeblinksHelper.php tmpl/default.php; do
+            unzip -l "$zip" | grep -q " ${required}$" || { echo "::error::${required} missing from the zip"; exit 1; }
+          done
+          if unzip -Z1 "$zip" | grep -E '^(vendor|tests|\.docker|\.doc|\.github)/|^composer\.|^phpunit\.xml|^build\.xml'; then
+            echo "::error::dev files leaked into the release zip"
+            exit 1
+          fi
+
+  integration:
+    name: Integration (Joomla ${{ matrix.joomla }})
+    runs-on: ubuntu-latest
+    needs: unit
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        # There is no official joomla:6.2 image yet; add it here once Docker Hub has one.
+        joomla: ['6.1-php8.4-apache']
+    env:
+      JOOMLA_TAG: ${{ matrix.joomla }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring
+          coverage: none
+          tools: composer:v2
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.composer/cache
+            vendor
+          key: composer-8.4-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-8.4-
+
+      # vendor/ reaches the container through the /repo mount, so it is installed on the runner
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      # compose, dev-proxy network, Joomla install, pinned com_weblinks, seed data
+      - name: Provision the test stack
+        run: bash .docker/setup.sh
+
+      - name: Unit + Integration suites in the container
+        run: bash .docker/test.sh
+
+      - name: Stack logs on failure
+        if: failure()
+        run: docker compose --project-directory .docker logs --tail=200
+
+      - name: Tear down
+        if: always()
+        run: docker compose --project-directory .docker down -v --remove-orphans

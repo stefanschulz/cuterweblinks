@@ -140,6 +140,16 @@ The **Integration** suite (`tests/Integration/LinksTest.php`) calls `getLinks()`
 
 The suite was checked by mutation: removing the access filters, the `ordering` default, the widened `catch`, the block-tag spacing, the language filter, or the state/published filters each make it fail. Keep that property when adding behaviour — write the test, break the code once, see it go red.
 
+**CI** (`.github/workflows/ci.yml`, on push to `main`, pull requests and manual dispatch):
+
+| Job | What it does |
+|---|---|
+| `unit` | PHP 8.3 and 8.4: `composer validate --strict`, `php -l` on every file, Unit suite. |
+| `package` | `phing package`, then checks that the manifest version has a section in `.doc/CHANGES.md`, that the key files are in the zip and that no dev files (`vendor/`, `tests/`, `.doc/`, `.docker/`, `composer.*`, `phpunit.xml*`, `build.xml`) leaked into it. |
+| `integration` | After `unit`: `composer install`, `.docker/setup.sh` (stack + pinned `com_weblinks` + seed), `.docker/test.sh` (both suites in the container), logs on failure, teardown. Currently Joomla `6.1-php8.4-apache`; there is no official 6.2 image yet - add the tag to the matrix once Docker Hub has one. |
+
+`.docker/setup.sh` pins the Weblinks package by version *and* SHA-256, so CI only changes when someone changes the pin.
+
 Earlier verification (1.5.1 and before) used disposable one-off Docker stacks; see `CHANGES.md` for what was checked each time.
 
 ---

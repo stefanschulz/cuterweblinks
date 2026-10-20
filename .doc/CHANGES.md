@@ -12,6 +12,7 @@ No change in behaviour; nothing here is a release by itself, the refactor ships 
 - **Refactor**: the `description_trim` logic moved unchanged from the `getLinks()` loop into `CuterWeblinksHelper::trimDescription()` so it can be unit-tested without Joomla.
 - **Build**: `build.xml` now also keeps `vendor/`, `tests/`, `composer.json`, `composer.lock` and `phpunit.xml.dist` out of the release zip (verified: the zip content is unchanged).
 - **Seed**: `.docker/seed/weblinks-seed.sql` gained an unpublished link and a link in an unpublished category (now 4 categories, 9 links), because the state/published filters were not covered by any fixture row.
+- **CI**: GitHub Actions workflow (`unit`, `package`, `integration` jobs, see ARCHITECTURE.md "Testing") and `.docker/setup.sh`, which provisions the Docker stack from scratch (pinned `com_weblinks`, seed) for CI and for local use.
 - **Known quirk (pinned by a test, not changed)**: `description_trim` drops a word that ends exactly at the limit (`alpha beta gamma` at 10 → `alpha…`), since it cuts at the last space *inside* the first N characters.
 
 ## 1.6.1 (October 2026)
