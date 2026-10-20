@@ -106,21 +106,7 @@ class CuterWeblinksHelper
                 if (isset($link->description)) {
                     $trim = (int) $params->get('description_trim', 0);
                     if ($trim > 0) {
-                        // block-level tags become a space first, otherwise strip_tags() glues
-                        // adjacent paragraphs together ("...end.</p><p>Next" -> "...end.Next");
-                        // inline tags (<b>, <a>, ...) are removed without one so words stay whole
-                        $html = preg_replace('/<\/?(?:p|div|br|hr|li|ul|ol|h[1-6]|table|tr|td|th|blockquote|pre)\b[^>]*>/i', ' ', $link->description);
-                        $plain = trim(preg_replace('/\s+/', ' ', strip_tags($html)));
-                        if (mb_strlen($plain) > $trim) {
-                            // cut at the last whole word within the limit, then ellipsis
-                            $cut = mb_substr($plain, 0, $trim);
-                            $lastSpace = mb_strrpos($cut, ' ');
-                            if ($lastSpace !== false) {
-                                $cut = mb_substr($cut, 0, $lastSpace);
-                            }
-                            $plain = rtrim($cut) . '…';
-                        }
-                        $link->description = $plain;
+                        $link->description = self::trimDescription($link->description, $trim);
                     }
                 }
                 $link->reference = Route::_('index.php?option=com_weblinks&task=weblink.go&id=' . $link->id);
@@ -144,6 +130,36 @@ class CuterWeblinksHelper
             }
         }
         return $links;
+    }
+
+    /**
+     * Reduce a description to plain text of at most <code>$limit</code> characters.
+     *
+     * Block-level tags become a space first, otherwise strip_tags() glues adjacent paragraphs
+     * together ("...end.</p><p>Next" -> "...end.Next"); inline tags (b, a, ...) are removed
+     * without one so words stay whole. If the text is longer than the limit it is cut at the
+     * last whole word within it and an ellipsis is appended; shorter text gets none.
+     *
+     * @param string $html  The raw description (HTML).
+     * @param int    $limit The maximum number of characters before the ellipsis, must be positive.
+     *
+     * @return string Plain text.
+     *
+     * @since 1.6.1
+     */
+    public static function trimDescription(string $html, int $limit): string
+    {
+        $html = preg_replace('/<\/?(?:p|div|br|hr|li|ul|ol|h[1-6]|table|tr|td|th|blockquote|pre)\b[^>]*>/i', ' ', $html);
+        $plain = trim(preg_replace('/\s+/', ' ', strip_tags($html)));
+        if (mb_strlen($plain) <= $limit) {
+            return $plain;
+        }
+        $cut = mb_substr($plain, 0, $limit);
+        $lastSpace = mb_strrpos($cut, ' ');
+        if ($lastSpace !== false) {
+            $cut = mb_substr($cut, 0, $lastSpace);
+        }
+        return rtrim($cut) . '…';
     }
 
     /**

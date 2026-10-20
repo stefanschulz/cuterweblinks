@@ -1,0 +1,27 @@
+{
+    "name": "theloom/mod-cuterweblinks",
+    "description": "Development tooling for the Cuter Weblinks Joomla site module. The module itself has no runtime dependencies.",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Stefan Schulz",
+            "email": "schulz@the-loom.de",
+            "homepage": "https://www.the-loom.de"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^11.5 || ^12.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TheLoom\\Module\\CuterWeblinks\\Site\\": "src/",
+            "TheLoom\\Module\\CuterWeblinks\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "phpunit --testsuite Unit"
+    }
+}

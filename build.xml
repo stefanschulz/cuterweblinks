@@ -17,6 +17,12 @@
                 <exclude name=".*"/>
                 <exclude name=".*/**"/>
                 <exclude name="build.xml"/>
+                <!-- dev tooling and tests: never part of the extension -->
+                <exclude name="vendor/**"/>
+                <exclude name="tests/**"/>
+                <exclude name="composer.json"/>
+                <exclude name="composer.lock"/>
+                <exclude name="phpunit.xml.dist"/>
             </fileset>
         </zip>
         <filehash file="${releasePath}" hashtype="1" algorithm="sha256" propertyname="fh256"/>
