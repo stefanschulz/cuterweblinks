@@ -1,0 +1,9 @@
+# Normalise line endings: LF in the repo, checkout as-is (shell scripts must stay LF).
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.zip binary
