@@ -6,3 +6,4 @@
 # composer / phpunit (dev tooling only, never shipped - see build.xml)
 /vendor/
 /.phpunit.cache/
+/.docker/.cache/

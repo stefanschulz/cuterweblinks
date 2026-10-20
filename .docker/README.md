@@ -23,6 +23,12 @@ cd P:/sites/_proxy && docker compose up -d
 
 ## Bring-up
 
+**Shortcut:** `.docker/setup.sh` does everything below in one go - `.env`, the `dev-proxy` network, `docker compose up`, waiting for Joomla's unattended install, installing a pinned and SHA-256-checked `com_weblinks` (skipped if present) and importing the seed. It is idempotent (re-running only re-imports the seed) and is what CI uses. It does *not* install `mod_cuterweblinks`; the tests load the module classes from the working tree, and for looking at the rendered module in a browser see "Installing the extensions".
+
+To bump the pinned Weblinks release, change `WEBLINKS_VERSION` and `WEBLINKS_SHA256` in `setup.sh` (or pass them as environment variables) after running `sha256sum` on the new `pkg-weblinks-<version>.zip`.
+
+The manual steps:
+
 ```bash
 cp .docker/.env.example .docker/.env       # then edit if you want
 docker compose --project-directory .docker up -d

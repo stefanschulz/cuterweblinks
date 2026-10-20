@@ -8,8 +8,8 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-WEB=cuterweblinks_dev_web
-DB=cuterweblinks_dev_db
+WEB="${WEB:-cuterweblinks_dev_web}"
+DB="${DB:-cuterweblinks_dev_db}"
 
 # shellcheck disable=SC1091
 [ -f .env ] && set -a && . ./.env && set +a
